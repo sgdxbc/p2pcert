@@ -1,0 +1,20 @@
+\ifdraft
+\newcommand{\editorial}[2]{{\color{#1}{#2}}\xspace}
+\else
+\newcommand{\editorial}[2]{}
+\fi
+\newcommand{\XXX}{\editorial{red}{XXX}}
+\newcommand{\xxx}[1]{\editorial{red}{XXX #1}}
+\newcommand{\lijl}[1]{\editorial{orange}{lijl: #1}}
+\newcommand{\sgd}[1]{\editorial{cyan}{sgd: #1}}
+
+\ifdraft
+\newenvironment{outline}{\color{blue} \textbf{Outline:}}{}
+\else
+\excludecomment{outline}
+\fi
+
+\newcommand{\sys}{H\textsc{etu}\xspace}
+
+\newcommand{\eg}{e.g.\@\xspace}
+\newcommand{\ie}{i.e.\@\xspace}
