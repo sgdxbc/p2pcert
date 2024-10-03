@@ -1,0 +1,35 @@
+{\tiny Most description probably also applies to other DHT protocols.}
+
+Kademlia provides two sets of services: peer discovery and key-value lookup.
+The former one contains less moving part and the reasoning about it may be heavily referenced for reasoning about the latter one, so we focus on the peer discovery service for now.
+
+The p2p network contains a set of peers, each with its own ID and address.
+The first distinguishing feature of p2p networks is that peers by default cannot contact every other (currently online) peers, unless they know the addresses of the other peers.
+To bootstrap a peer \ie upon the peer joining the network, a set of \emph{seed peers} is hard coded into its program \ie the IDs and addresses of the seed peers are known by every peer that ever exists.
+To bootstrap a p2p network, the system is initialized with the set of seed peers.
+Seed peers can be assumed to be never offline (at least not all of them simutenouly), and (if matters) to be always honest.
+They have somewhat the global view of the system as every joining peer must first contact them to properly join the network, but they usually run the identical protocol to all the other peers and \eg do not remember every seen peer.
+This prevents the system to be centralized around them.
+
+It's not enough to just know and contact the seed peers, and Kademlia handles the rest.
+The peer discovery service provides single interface: \find[$id$, $n$].
+The interface returns \emph{at most} $n$ peer addresses that are \emph{close} to $id$ (more on the definition of closeness).
+If a peer learned the ID of the other peer externally and wants to contact the other peer, it can invoke \find with $n = 1$ to find out the address.
+If some peers happen to invoke \find with same $id$ and $n$ \emph{(almost) at the same time}, the result \emph{may be similar} on every peer.
+The soundness property will formalize this insight.
+
+Kademlia (and most DHT protocols) defines \emph{distance} of peer IDs that is respected by all peers.
+The \dist[$id_1$, $id_2$] returns an integer, and the larger the integer the more \emph{distanced} the two IDs.
+\footnote{Specific to Kademlia \dist returns the XOR of two IDs that is interpreted as unsigned integer, but this detail is not particularly important.}
+Kademlia leverages three properties of the distance definition:
+\begin{itemize}
+    \item $\dist[id, id] = 0$
+    \item $\dist[id_1, id_2] = \dist[id_2, id_1]$
+    \item $\dist[id_1, id_2] + \dist[id_2, id_3] \geq \dist[id_1, id_3]$
+\end{itemize}
+
+Each peer locally keeps a map from peer IDs to addresses of $O(log{N})$ other peers, where $N$ is the total number of currently alive peers.
+(The peers do not explicitly estimate/keep track of $N$, Kademlia ensures this in an adaptive manner.)
+Kademlia carefully maintains the map so that the map contains many \emph{close} peers and less \emph{far} peers.
+In another word, every peer knows well about its local peers while know only a bit about peers far away.
+The function \lfind[$id$, $n$] can be invoked locally on the peers, which returns at most $n$ peers that are the closest (respecting \dist) to $id$ in the map.

@@ -1,0 +1,16 @@
+Formally modeling and verifying the most prevalent DHT protocol - Kademlia.
+Define the system states and transitions, define and verify the properties of Kademlia.
+The focus is on the dynamically-changed membership \ie churning scenario that Kademlia (along with most p2p works) works with, which not only exposes challenging transitions but also affects the statements of properties.
+
+The work may or may not deal with Kademlia specifically.
+If so, the contributions are
+\begin{itemize}
+    \item Iterate the model into a more practical form compare to previous efforts (which are to be investigated), especially regarding the churning.
+    \item Closely relate the verification with functional production in reality.
+    In another word, make a system paper out of the idea.
+    \item Optionally reasoning about Byzantine faults.
+\end{itemize}
+
+Alternatively, the work may be generalized into a universal logic and library for verifying churning networks.
+Either reusable facts or impossibilities would be useful.
+And again, reasoning about Byzantine faults is probably welcomed but not a must.
