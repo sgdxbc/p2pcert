@@ -1,0 +1,29 @@
+name: Latex artifact
+
+on: push
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/configure-pages@v5
+    - uses: xu-cheng/texlive-action@v2
+      with:
+        run: |
+          apk add make python3
+          make
+    - run: |
+        mkdir _site
+        mv paper.pdf _site
+    - uses: actions/upload-pages-artifact@v3
+    - uses: actions/deploy-pages@v4
