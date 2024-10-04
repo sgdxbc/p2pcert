@@ -11,6 +11,7 @@ Seed peers can be assumed to be never offline (at least not all of them simuteno
 They have somewhat the global view of the system as every joining peer must first contact them to properly join the network, but they usually run the identical protocol to all the other peers and \eg do not remember every seen peer.
 This prevents the system to be centralized around them.
 
+\paragraph{Peer discovery interface.}
 It's not enough to just know and contact the seed peers, and Kademlia handles the rest.
 The peer discovery service provides single interface: \find[$id$, $n$].
 The interface returns \emph{at most} $n$ peer addresses that are \emph{close} to $id$ (more on the definition of closeness).
@@ -18,6 +19,7 @@ If a peer learned the ID of the other peer externally and wants to contact the o
 If some peers happen to invoke \find with same $id$ and $n$ \emph{(almost) at the same time}, the result \emph{may be similar} on every peer.
 The soundness property will formalize this insight.
 
+\paragraph{Peer ID space and distance.}
 Kademlia (and most DHT protocols) defines \emph{distance} of peer IDs that is respected by all peers.
 The \dist[$id_1$, $id_2$] returns an integer, and the larger the integer the more \emph{distanced} the two IDs.
 \footnote{Specific to Kademlia \dist returns the XOR of two IDs that is interpreted as unsigned integer, but this detail is not particularly important.}
@@ -28,8 +30,22 @@ Kademlia leverages three properties of the distance definition:
     \item $\dist[id_1, id_2] + \dist[id_2, id_3] \geq \dist[id_1, id_3]$
 \end{itemize}
 
-Each peer locally keeps a map from peer IDs to addresses of $O(log{N})$ other peers, where $N$ is the total number of currently alive peers.
-(The peers do not explicitly estimate/keep track of $N$, Kademlia ensures this in an adaptive manner.)
+\paragraph{Peer local state.}
+Each peer locally keeps a map from peer IDs to addresses of other peers.
 Kademlia carefully maintains the map so that the map contains many \emph{close} peers and less \emph{far} peers.
 In another word, every peer knows well about its local peers while know only a bit about peers far away.
 The function \lfind[$id$, $n$] can be invoked locally on the peers, which returns at most $n$ peers that are the closest (respecting \dist) to $id$ in the map.
+
+\paragraph{State update.}
+Peers may get to know about unseen peers through two ways: the replies of outgoing queries and the incoming queries.
+(The ``query'' refers to the only RPC of Kademlia.)
+The newly learned peer information is inserted into local map.
+If necessary eviction is conducted to keep the map a bounded size.
+The exact strategy is not described but the general idea is to keep denser information of closer peers.
+
+\paragraph{\find[$id$, $n$] implementation.}
+Initialize peer candidate list with \lfind[$id$, $n$].
+Query the head peer of the list \ie the peer that is closest to $id$ based on current knowledge.
+The queried peer performs \lfind[$id$, $n$] and replies, merge the replied peers into candidate list.
+Repeat the query process until the top $n$ peers in the list does not change anymore.
+Return them as the \find result.
