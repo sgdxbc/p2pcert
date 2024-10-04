@@ -1,0 +1,12 @@
+Extending an ordinary model for fixed membership network.
+
+First with a marker of ``active'' peers.
+In the simplest form every peer active only once.
+
+Second with a pair of peer activate/deactivate system transitions.
+In my opinion it is basically acceptable in practice to assume that peer activation (\ie bootstrap) happens instantly, in another word the joining peer may interact with the network in whatever way it desired before any existing peer deactivates.
+The deactivation may be modeled as a broadcast message as in previous works.
+
+The visible network abstraction.
+Unlike a fixed membership (or maybe ``clique'' assumption if I understand correctly) network where peers can freely contact every other peer in the network, under our setup a peer can only contact those peers whose addresses are known at the time to contact (and also haven't left yet).
+In other p2p protocols this set of reachable peers depend on how well peer discovery service works, while in Kademlia this is somewhat self-referential.

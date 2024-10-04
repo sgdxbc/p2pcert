@@ -3,6 +3,7 @@
 Kademlia provides two sets of services: peer discovery and key-value lookup.
 The former one contains less moving part and the reasoning about it may be heavily referenced for reasoning about the latter one, so we focus on the peer discovery service for now.
 
+\paragraph{The visibility of the network.}
 The p2p network contains a set of peers, each with its own ID and address.
 The first distinguishing feature of p2p networks is that peers by default cannot contact every other (currently online) peers, unless they know the addresses of the other peers.
 To bootstrap a peer \ie upon the peer joining the network, a set of \emph{seed peers} is hard coded into its program \ie the IDs and addresses of the seed peers are known by every peer that ever exists.
@@ -49,6 +50,10 @@ Query the head peer of the list \ie the peer that is closest to $id$ based on cu
 The queried peer performs \lfind[$id$, $n$] and replies, merge the replied peers into candidate list.
 Repeat the query process until the top $n$ peers in the list does not change anymore.
 Return them as the \find result.
+
+Notice that the protocol obeys the visibility rule described above.
+(Which is no surprise since Kademlia is a practical protocol.)
+All the query RPCs are made to the peers whose addresses are already known.
 
 \paragraph{Bootstrap protocol.}
 Initialize the local map with seed peers.
