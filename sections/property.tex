@@ -1,0 +1,30 @@
+Many of the following I am not sure whether provable.
+If they are, probably demand some preconditions.
+
+\paragraph{Soundness.}
+\find should return peers that are either currently or previously active, but not the ones that have never been activated.
+
+Two \find is considered equivalent if they are invoked with same arguments and there is no peer activate/deactivate event between the start and the end of them.
+Any two equivalent \find should return identical results, regardless of which peer invokes.
+
+If two \find are equivalent except the $n$ arguments are different, then the result of the one with larger $n$ should be the superset of the other one.
+
+If \find an ID of currently active peer, the peer should always be included in the result regardless of $n$ argument.
+
+(There should be some statements about the ``closest'' part but I cannot formalize them well for now.)
+
+(There should be more statements that depends on the current active set of peers.)
+
+(Anyway, I would like them to be proved in an ever-changing system setup instead of the salient network model.)
+
+\paragraph{Termination.}
+Every \find should be completed with finite rounds of RPCs.
+In fact the work achieves $\log{N}$ expected rounds where $N$ is the number of active peers.
+I am not sure how to formalize the expected complexity.
+
+\paragraph{Invariants/lemmas.}
+Every peer should always be kept in the local map of \emph{some} other nodes.
+
+At any point we can construct a tree that contains all of active peers rooted by any active peer, and edge from a peer to all the peers in its local map.
+
+A \find will not terminate before the top $n$ closest peers are contacted, and will terminate \emph{soon} after they are all contacted.
